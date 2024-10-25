@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 
 
-// Comment
+// Comment 2
 public interface ISchetsTool
 {
     void MuisVast(SchetsControl s, Point p);
