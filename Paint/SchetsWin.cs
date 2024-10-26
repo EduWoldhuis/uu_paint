@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -30,9 +31,13 @@ public class SchetsWin : Form
 
     private void afsluiten(object obj, EventArgs ea)
     {
-        this.Close();
+        //nieuw -- //Check voor veranderingen. Er wordt nu standaard een waarschuwing gegeven. Werkt ook nog niet voor rode kruis afsluiten maar weet niet waar dat is nog...
+        DialogResult sluiten = MessageBox.Show("Er zijn onopgeslagen wijzigingen!\nAfsluiten zonder op te slaan?", "Waarschuwing!", MessageBoxButtons.YesNo);
+        if (sluiten == DialogResult.Yes)
+        {
+            this.Close();
+        }
     }
-
     public SchetsWin()
     {
         ISchetsTool[] deTools = { new PenTool()         
@@ -85,6 +90,11 @@ public class SchetsWin : Form
     {   
         ToolStripMenuItem menu = new ToolStripMenuItem("File");
         menu.MergeAction = MergeAction.MatchOnly;
+        String[] opslaanAlsOpties = { "PNG", "JPG", "BMP" }; //nieuw
+        ToolStripMenuItem opslaanAls = new ToolStripMenuItem("Opslaan"); //nieuw
+        foreach (string o in opslaanAlsOpties) //nieuw
+            opslaanAls.DropDownItems.Add(o, null, schetscontrol.Opslaan); //nieuw
+        menu.DropDownItems.Add(opslaanAls); //nieuw
         menu.DropDownItems.Add("Sluiten", null, this.afsluiten);
         menuStrip.Items.Add(menu);
     }
