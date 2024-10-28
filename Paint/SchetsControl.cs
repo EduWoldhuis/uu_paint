@@ -55,22 +55,29 @@ public class SchetsControl : UserControl
     {   string kleurNaam = ((ToolStripMenuItem)obj).Text;
         penkleur = Color.FromName(kleurNaam);
     }
-    public void Opslaan(object obj, EventArgs ea) //nieuw
+    public void Opslaan(object obj, EventArgs ea)
     {
-        //drie if statements KAN KORTER vlgns mij (edu help pls :>) switch case
-        //Slaat op naar C:\...\repos\uu_paint\Paint\bin\Debug\net8.0-windows
-        //Overwrite ook automatisch, miss aanpassen
-        if (obj.ToString() == "PNG") 
+        // Standaard Windows file-opslaan dialoog.
+        SaveFileDialog dialog = new SaveFileDialog();
+        // prompt de user als er een bestaand file overschreven moet worden.
+        dialog.OverwritePrompt = true;
+        string filetype = obj.ToString();
+        if (dialog.ShowDialog() == DialogResult.OK)
         {
-            schets.KrijgBitmap().Save("PNG.png", ImageFormat.Png);
+            switch (filetype)
+            {
+                case "PNG":
+                    schets.KrijgBitmap().Save(dialog.FileName, ImageFormat.Png);
+                    break;
+                case "JPG":
+                    schets.KrijgBitmap().Save(dialog.FileName, ImageFormat.Jpeg);
+                    break;
+                case "BMP":
+                    schets.KrijgBitmap().Save(dialog.FileName);
+                    break;
+            }
         }
-        if (obj.ToString() == "JPG")
-        {
-            schets.KrijgBitmap().Save("JPG.jpg", ImageFormat.Jpeg);
-        }
-        if (obj.ToString() == "BMP")
-        {
-            schets.KrijgBitmap().Save("BMP.bmp");
-        }
+
+        
     }
 }

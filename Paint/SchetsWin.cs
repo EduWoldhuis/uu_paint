@@ -72,6 +72,7 @@ public class SchetsWin : Form
         schetscontrol.KeyPress +=  (object o, KeyPressEventArgs kpea) => 
                                     {   huidigeTool.Letter  (schetscontrol, kpea.KeyChar); 
                                     };
+        
         this.Controls.Add(schetscontrol);
 
         menuStrip = new MenuStrip();

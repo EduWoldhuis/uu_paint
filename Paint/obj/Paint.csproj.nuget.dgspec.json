@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\reins\\Source\\Repos\\uu_paint\\Paint\\Paint.csproj": {}
+    "C:\\Users\\user\\Source\\Repos\\uu_paint\\Paint\\Paint.csproj": {}
   },
   "projects": {
-    "C:\\Users\\reins\\Source\\Repos\\uu_paint\\Paint\\Paint.csproj": {
+    "C:\\Users\\user\\Source\\Repos\\uu_paint\\Paint\\Paint.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\reins\\Source\\Repos\\uu_paint\\Paint\\Paint.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Source\\Repos\\uu_paint\\Paint\\Paint.csproj",
         "projectName": "Paint",
-        "projectPath": "C:\\Users\\reins\\Source\\Repos\\uu_paint\\Paint\\Paint.csproj",
-        "packagesPath": "C:\\Users\\reins\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\reins\\Source\\Repos\\uu_paint\\Paint\\obj\\",
+        "projectPath": "C:\\Users\\user\\Source\\Repos\\uu_paint\\Paint\\Paint.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\Source\\Repos\\uu_paint\\Paint\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\reins\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
