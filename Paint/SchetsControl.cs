@@ -55,7 +55,7 @@ public class SchetsControl : UserControl
     {   string kleurNaam = ((ToolStripMenuItem)obj).Text;
         penkleur = Color.FromName(kleurNaam);
     }
-    public void Opslaan(object obj, EventArgs ea)
+    public void Opslaan(object obj, EventArgs ea) // Nieuw
     {
         // Standaard Windows file-opslaan dialoog.
         SaveFileDialog dialog = new SaveFileDialog();
