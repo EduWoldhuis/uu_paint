@@ -77,7 +77,5 @@ public class SchetsControl : UserControl
                     break;
             }
         }
-
-        
     }
 }
