@@ -6,6 +6,7 @@ using System.Drawing;
 public interface drawInterface
 {
     void teken();
+    string returnTool();
 }
 public class twoPointObject : drawInterface
 {
@@ -13,12 +14,29 @@ public class twoPointObject : drawInterface
     {
 
     }
+    public string returnTool()
+    {
+        return tool;
+    }
     public string tool;
     public Point p1;
     public Point p2;
 }
 
+public class textObject : drawInterface
+{
+    public void teken()
+    {
 
+    }
+    public string returnTool()
+    {
+        return tool;
+    }
+    public string tool;
+    public Point startpoint;
+    public string text;
+}
 public class Schets
 {
     private Bitmap bitmap;
