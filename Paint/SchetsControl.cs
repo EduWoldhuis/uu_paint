@@ -3,13 +3,18 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Windows.Forms;
 
 public class SchetsControl : UserControl
 {   
     private Schets schets;
     private Color penkleur;
-
+    public void history_add(tekenObject obj)
+    {
+        schets.history.Add(obj);
+        Debug.WriteLine(schets.history.Count);
+    }
     public Color PenKleur
     { get { return penkleur; }
     }

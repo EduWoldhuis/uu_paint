@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -72,6 +73,15 @@ public abstract class TweepuntTool : StartpuntTool
     }
     public override void MuisLos(SchetsControl s, Point p)
     {   base.MuisLos(s, p);
+        // Hier met de List bezig. 
+        // Debug.WriteLine($"Point: {p.ToString()} , {this.startpunt.ToString()}, Tool: {this.ToString()}");
+        tekenObject obj = new tekenObject();
+        obj.tool = this.ToString();
+        obj.p1 = startpunt;
+        obj.p2 = p;
+        
+        s.history_add(obj);
+        
         this.Compleet(s.MaakBitmapGraphics(), this.startpunt, p);
         s.Invalidate();
     }

@@ -2,10 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
+// nieuw
+public class tekenObject
+{
+    public string tool;
+    public Point p1;
+    public Point p2;
+}
+
 public class Schets
 {
     private Bitmap bitmap;
-        
+    // nieuw
+    public List<tekenObject> history = new List<tekenObject>();
+
     public Schets()
     {
         bitmap = new Bitmap(1, 1);
