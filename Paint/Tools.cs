@@ -43,7 +43,7 @@ public class TekstTool : StartpuntTool
         Graphics gr = s.MaakBitmapGraphics();
 
         Font font = new Font("Tahoma", 40);
-        this.startpunt.X += (int)gr.MeasureString(c.ToString(), font).Width;
+        this.startpunt.X += (int)gr.MeasureString(c.ToString(), font, this.startpunt, StringFormat.GenericTypographic).Width;
 
         HistoryAction action = new HistoryAction(this, this.startpunt, c);
         s.AddHistory(action);
@@ -62,11 +62,8 @@ public class TekstTool : StartpuntTool
             Font font = new Font("Tahoma", 40);
             string tekst = c.ToString();
             SizeF sz = g.MeasureString(tekst, font, startpunt, StringFormat.GenericTypographic);
-            g.DrawString(tekst, font, kwast,
-                                            startpunt, StringFormat.GenericTypographic);
+            g.DrawString(tekst, font, kwast, startpunt, StringFormat.GenericTypographic);
             // gr.DrawRectangle(Pens.Black, startpunt.X, startpunt.Y, sz.Width, sz.Height);
-            startpunt.X += (int)sz.Width;
-            s.Invalidate();
         }
     }
 }
