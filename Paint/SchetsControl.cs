@@ -31,16 +31,19 @@ public class HistoryAction
 
     public void Draw(Graphics g, SchetsControl s)
     {
+        Debug.WriteLine(Tool.GetType());
         // Als het een TweepuntTool is, zet de Tool om, zodat de Compleet() functie aangeroepen kan worden.
         if (Tool is TweepuntTool tweepuntTool)
         {
             tweepuntTool.Compleet(g, StartPoint, EndPoint);
         }
         // Als het een TekstTool is, zet de Tool om, zodat de Letter() functie aangeroepen kan worden.
+
         else if (Tool is TekstTool tekstTool) 
         {
-            tekstTool.Letter(s, Character);
+            tekstTool.DrawLetter(s, g, Character, StartPoint);
         }
+        
         
     }
 }
@@ -77,13 +80,9 @@ public class SchetsControl : UserControl
     }
     public void AddHistory(HistoryAction action)
     {
+        Debug.WriteLine(history.Count);
         history.Add(action);
-    }
-
-    public List<HistoryAction> GetHistory()
-    {
-        return history;
-    }
+    }   
 
     public void RedrawHistory()
     {

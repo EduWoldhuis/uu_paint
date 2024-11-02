@@ -39,15 +39,28 @@ public class TekstTool : StartpuntTool
 
     public override void Letter(SchetsControl s, char c)
     {
+        Debug.WriteLine($"HISTORY ADD: char: {c}, startpunt: {this.startpunt.X}, {this.startpunt.Y}");
+        Graphics gr = s.MaakBitmapGraphics();
+        Font font = new Font("Tahoma", 40);
+        this.startpunt.X += (int)gr.MeasureString(c.ToString(), font).Width;
+        HistoryAction action = new HistoryAction(this, this.startpunt, c);
+        s.AddHistory(action);
+    }
+    public void DrawLetter(SchetsControl s, Graphics g, char c, Point startpunt)
+    {
+        Debug.WriteLine($"char: {c}, startpunt: {startpunt.X}, {startpunt.Y}");
         if (c >= 32)
         {
-            Graphics gr = s.MaakBitmapGraphics();
+            if (kwast == null)
+            {
+                kwast = new SolidBrush(s.PenKleur);
+            }
+            // Graphics gr = s.MaakBitmapGraphics();
             Font font = new Font("Tahoma", 40);
             string tekst = c.ToString();
-            SizeF sz =
-            gr.MeasureString(tekst, font, this.startpunt, StringFormat.GenericTypographic);
-            gr.DrawString(tekst, font, kwast,
-                                            this.startpunt, StringFormat.GenericTypographic);
+            SizeF sz = g.MeasureString(tekst, font, startpunt, StringFormat.GenericTypographic);
+            g.DrawString(tekst, font, kwast,
+                                            startpunt, StringFormat.GenericTypographic);
             // gr.DrawRectangle(Pens.Black, startpunt.X, startpunt.Y, sz.Width, sz.Height);
             startpunt.X += (int)sz.Width;
             s.Invalidate();
