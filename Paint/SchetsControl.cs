@@ -10,7 +10,7 @@ public class SchetsControl : UserControl
 {   
     private Schets schets;
     private Color penkleur;
-    public void history_add(tekenObject obj)
+    public void history_add(drawInterface obj)
     {
         schets.history.Add(obj);
         Debug.WriteLine(schets.history.Count);

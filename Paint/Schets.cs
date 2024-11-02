@@ -3,18 +3,27 @@ using System.Collections.Generic;
 using System.Drawing;
 
 // nieuw
-public class tekenObject
+public interface drawInterface
 {
+    void teken();
+}
+public class twoPointObject : drawInterface
+{
+    public void teken()
+    {
+
+    }
     public string tool;
     public Point p1;
     public Point p2;
 }
 
+
 public class Schets
 {
     private Bitmap bitmap;
     // nieuw
-    public List<tekenObject> history = new List<tekenObject>();
+    public List<drawInterface> history = new List<drawInterface>();
 
     public Schets()
     {

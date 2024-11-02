@@ -75,7 +75,7 @@ public abstract class TweepuntTool : StartpuntTool
     {   base.MuisLos(s, p);
         // Hier met de List bezig. 
         // Debug.WriteLine($"Point: {p.ToString()} , {this.startpunt.ToString()}, Tool: {this.ToString()}");
-        tekenObject obj = new tekenObject();
+        twoPointObject obj = new twoPointObject();
         obj.tool = this.ToString();
         obj.p1 = startpunt;
         obj.p2 = p;
