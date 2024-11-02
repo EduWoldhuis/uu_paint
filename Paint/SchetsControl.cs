@@ -31,10 +31,12 @@ public class HistoryAction
 
     public void Draw(Graphics g, SchetsControl s)
     {
+        // Als het een TweepuntTool is, zet de Tool om, zodat de Compleet() functie aangeroepen kan worden.
         if (Tool is TweepuntTool tweepuntTool)
         {
             tweepuntTool.Compleet(g, StartPoint, EndPoint);
         }
+        // Als het een TekstTool is, zet de Tool om, zodat de Letter() functie aangeroepen kan worden.
         else if (Tool is TekstTool tekstTool) 
         {
             tekstTool.Letter(s, Character);
@@ -51,7 +53,26 @@ public class SchetsControl : UserControl
     {
         if (history.Count > 0)
         {
-            history.RemoveAt(history.Count - 1);
+            // Als iemand met en pen tekent, direct de hele strook verwijderen.
+            if (history[history.Count - 1].Tool.ToString() == "pen")
+            {
+                // IndexOutOfRange omzeilen
+                while (history.Count > 0 && history[history.Count - 1].Tool.ToString() == "pen")
+                {
+                    // Eerst de lijn verwijderen, dan checken om hangende lijnen ter groote van 1 HistoryAction te voorkomen.
+                    history.RemoveAt(history.Count - 1);
+                    // Als twee lijnen achter elkaar zijn getekend, verwijder ze niet. Alleen de continuë drag verwijderen.
+                    // Omdat tijdens de drag de mouseDown() een korte tijd na de mouseUp() aangeroepen wordt, is het mogelijk dat bij langzame CPUs in de tussentijd de muis bewogen is, en een continuë lijn dus in meerdere continuë lijnen wordt opgesplitst, maar dit lijkt mij de beste methode.
+                    if (history.Count > 1 && history[history.Count - 1].StartPoint != history[history.Count - 2].EndPoint)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                history.RemoveAt(history.Count - 1);
+            }
         }
     }
     public void AddHistory(HistoryAction action)

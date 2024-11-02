@@ -83,15 +83,7 @@ public abstract class TweepuntTool : StartpuntTool
     public override void MuisLos(SchetsControl s, Point p)
     {
         base.MuisLos(s, p);
-        // Hier met de List bezig. 
         // Debug.WriteLine($"Point: {p.ToString()} , {this.startpunt.ToString()}, Tool: {this.ToString()}");
-        twoPointObject obj = new twoPointObject();
-        /* obj.tool = this.ToString();
-        obj.p1 = startpunt;
-        obj.p2 = p;
-        */
-
-        //s.history_add(this);
         HistoryAction action = new HistoryAction(this, this.startpunt, p);
 
         if (this.ToString() == "gum")
@@ -102,7 +94,6 @@ public abstract class TweepuntTool : StartpuntTool
         {
             s.AddHistory(action);
         }
-        // this.Compleet(s.MaakBitmapGraphics(), this.startpunt, p);
         s.Invalidate();
     }
     public override void Letter(SchetsControl s, char c)
