@@ -41,7 +41,8 @@ public class Schets
 {
     private Bitmap bitmap;
     // nieuw
-    public List<drawInterface> history = new List<drawInterface>();
+    // public List<drawInterface> history = new List<drawInterface>();
+    public List<StartpuntTool> history = new List<StartpuntTool>();
 
     public Schets()
     {
