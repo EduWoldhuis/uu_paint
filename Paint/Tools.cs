@@ -41,10 +41,13 @@ public class TekstTool : StartpuntTool
     {
         Debug.WriteLine($"HISTORY ADD: char: {c}, startpunt: {this.startpunt.X}, {this.startpunt.Y}");
         Graphics gr = s.MaakBitmapGraphics();
+
         Font font = new Font("Tahoma", 40);
         this.startpunt.X += (int)gr.MeasureString(c.ToString(), font).Width;
+
         HistoryAction action = new HistoryAction(this, this.startpunt, c);
         s.AddHistory(action);
+        s.Invalidate();
     }
     public void DrawLetter(SchetsControl s, Graphics g, char c, Point startpunt)
     {
