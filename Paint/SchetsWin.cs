@@ -96,6 +96,9 @@ public class SchetsWin : Form
         foreach (string o in opslaanAlsOpties) //nieuw
             opslaanAls.DropDownItems.Add(o, null, schetscontrol.Opslaan); //nieuw
         menu.DropDownItems.Add(opslaanAls); //nieuw
+        //ToolStripMenuItem loadImage = new ToolStripMenuItem("Open");
+        menu.DropDownItems.Add("Open", null, schetscontrol.LoadFile);
+
         menu.DropDownItems.Add("Sluiten", null, this.afsluiten);
         menuStrip.Items.Add(menu);
     }
@@ -119,6 +122,7 @@ public class SchetsWin : Form
         ToolStripMenuItem menu = new ToolStripMenuItem("Actie");
         menu.DropDownItems.Add("Clear", null, schetscontrol.Schoon );
         menu.DropDownItems.Add("Roteer", null, schetscontrol.Roteer );
+        menu.DropDownItems.Add("Undo", null, schetscontrol.PopHistory);
         ToolStripMenuItem submenu = new ToolStripMenuItem("Kies kleur");
         foreach (string k in kleuren)
             submenu.DropDownItems.Add(k, null, schetscontrol.VeranderKleurViaMenu);
@@ -160,11 +164,16 @@ public class SchetsWin : Form
         Button rotate = new Button(); paneel.Controls.Add(rotate);
         rotate.Text = "Rotate"; 
         rotate.Location = new Point( 80, 0); 
-        rotate.Click += schetscontrol.Roteer; 
-           
+        rotate.Click += schetscontrol.Roteer;
+
+        Button undo = new Button(); paneel.Controls.Add(undo);
+        undo.Text = "Undo";
+        undo.Location = new Point(160, 0);
+        undo.Click += schetscontrol.PopHistory;
+
         Label penkleur = new Label(); paneel.Controls.Add(penkleur);
         penkleur.Text = "Penkleur:"; 
-        penkleur.Location = new Point(180, 3); 
+        penkleur.Location = new Point(240, 3); 
         penkleur.AutoSize = true;               
             
         ComboBox cbb = new ComboBox(); paneel.Controls.Add(cbb);

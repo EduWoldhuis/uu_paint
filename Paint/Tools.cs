@@ -39,7 +39,6 @@ public class TekstTool : StartpuntTool
 
     public override void Letter(SchetsControl s, char c)
     {
-        Debug.WriteLine($"HISTORY ADD: char: {c}, startpunt: {this.startpunt.X}, {this.startpunt.Y}");
         Graphics gr = s.MaakBitmapGraphics();
 
         Font font = new Font("Tahoma", 40);
@@ -51,7 +50,6 @@ public class TekstTool : StartpuntTool
     }
     public void DrawLetter(SchetsControl s, Graphics g, char c, Point startpunt)
     {
-        Debug.WriteLine($"char: {c}, startpunt: {startpunt.X}, {startpunt.Y}");
         if (c >= 32)
         {
             if (kwast == null)
@@ -101,7 +99,8 @@ public abstract class TweepuntTool : StartpuntTool
 
         if (this.ToString() == "gum")
         {
-            s.PopHistory();
+            s.eraseLocation(p);
+            Debug.WriteLine("GUM");
         }
         else
         {
@@ -116,7 +115,6 @@ public abstract class TweepuntTool : StartpuntTool
 
     public virtual void Compleet(Graphics g, Point p1, Point p2)
     {
-        
         this.Bezig(g, p1, p2);
     }
 }
@@ -185,10 +183,20 @@ public class PenTool : LijnTool
 public class GumTool : PenTool
 {
     public override string ToString() { return "gum"; }
-
-    public override void Bezig(Graphics g, Point p1, Point p2)
+    public override void MuisVast(SchetsControl s, Point p)
+    {
+        base.MuisLos(s, p);
+    }
+    public override void MuisLos(SchetsControl s, Point p)
     {
         
+    }
+    public override void MuisDrag(SchetsControl s, Point p)
+    {
+        
+    }
+    public override void Bezig(Graphics g, Point p1, Point p2)
+    {
         g.DrawLine(MaakPen(Brushes.White, 7), p1, p2);
     }
 }

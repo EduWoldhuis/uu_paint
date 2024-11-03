@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -13,38 +14,94 @@ public class HistoryAction
     public Point StartPoint { get; }
     public Point EndPoint { get; }
     public Char Character { get; }
+
     public HistoryAction(StartpuntTool tool, Point start, Point end)
     {
-        
         Tool = tool;
         StartPoint = start;
         EndPoint = end;
     }
+
     public HistoryAction(StartpuntTool tool, Point start, Char character)
     {
-
         Tool = tool;
         StartPoint = start;
         Character = character;
     }
 
-
     public void Draw(Graphics g, SchetsControl s)
     {
-        Debug.WriteLine(Tool.GetType());
-        // Als het een TweepuntTool is, zet de Tool om, zodat de Compleet() functie aangeroepen kan worden.
         if (Tool is TweepuntTool tweepuntTool)
         {
             tweepuntTool.Compleet(g, StartPoint, EndPoint);
         }
-        // Als het een TekstTool is, zet de Tool om, zodat de Letter() functie aangeroepen kan worden.
-
-        else if (Tool is TekstTool tekstTool) 
+        else if (Tool is TekstTool tekstTool)
         {
             tekstTool.DrawLetter(s, g, Character, StartPoint);
         }
-        
-        
+    }
+
+    public bool CollidesWith(Point p)
+    {
+        if (Tool is RechthoekTool || Tool is VolRechthoekTool)
+        {
+            return RectangleContains(p, StartPoint, EndPoint);
+        }
+        else if (Tool is OvaalTool || Tool is VolOvaalTool)
+        {
+            return EllipseContains(p, StartPoint, EndPoint);
+        }
+        else if (Tool is LijnTool || Tool is PenTool)
+        {
+            return LineContains(p, StartPoint, EndPoint, tolerance: 3);
+        }
+        return false;
+    }
+
+    private bool RectangleContains(Point p, Point topLeft, Point bottomRight)
+    {
+        int left = Math.Min(topLeft.X, bottomRight.X);
+        int right = Math.Max(topLeft.X, bottomRight.X);
+        int top = Math.Min(topLeft.Y, bottomRight.Y);
+        int bottom = Math.Max(topLeft.Y, bottomRight.Y);
+        return p.X >= left && p.X <= right && p.Y >= top && p.Y <= bottom;
+    }
+
+    private bool EllipseContains(Point p, Point topLeft, Point bottomRight)
+    {
+        double centerX = (topLeft.X + bottomRight.X) / 2.0;
+        double centerY = (topLeft.Y + bottomRight.Y) / 2.0;
+        double radiusX = Math.Abs(bottomRight.X - topLeft.X) / 2.0;
+        double radiusY = Math.Abs(bottomRight.Y - topLeft.Y) / 2.0;
+
+        // dx en dy naar het midden van de cirkel zetten
+        double dx = (p.X - centerX) / radiusX;
+        double dy = (p.Y - centerY) / radiusY;
+        return dx * dx + dy * dy <= 1;
+    }
+
+    private bool LineContains(Point p, Point lineStart, Point lineEnd, double tolerance)
+    {
+        // Algoritme dat ik online heb gevonden
+        double dx = lineEnd.X - lineStart.X;
+        double dy = lineEnd.Y - lineStart.Y;
+        double lengthSquared = dx * dx + dy * dy;
+
+        if (lengthSquared == 0)
+            return Distance(p, lineStart) <= tolerance;
+
+        double t = ((p.X - lineStart.X) * dx + (p.Y - lineStart.Y) * dy) / lengthSquared;
+        t = Math.Max(0, Math.Min(1, t));
+
+        Point closestPoint = new Point((int)(lineStart.X + t * dx), (int)(lineStart.Y + t * dy));
+        return Distance(p, closestPoint) <= tolerance;
+    }
+
+    private double Distance(Point p1, Point p2)
+    {
+        double dx = p1.X - p2.X;
+        double dy = p1.Y - p2.Y;
+        return Math.Sqrt(dx * dx + dy * dy);
     }
 }
 public class SchetsControl : UserControl
@@ -52,7 +109,7 @@ public class SchetsControl : UserControl
     private Schets schets;
     private Color penkleur;
     private List<HistoryAction> history = new List<HistoryAction>();
-    public void PopHistory()
+    public void PopHistory(object o, EventArgs ea)
     {
         if (history.Count > 0)
         {
@@ -75,12 +132,25 @@ public class SchetsControl : UserControl
             else
             {
                 history.RemoveAt(history.Count - 1);
+                this.Invalidate();
+            }
+        }
+    }
+    public void eraseLocation(Point p)
+    {
+        
+        for (int i = history.Count - 1; i >= 0; i--)
+        {
+            // Check om te zorgen dat het punt binnen de twee andere punten valt.
+            if (history[i].CollidesWith(p))
+            {
+                history.RemoveAt(i);
+                return;
             }
         }
     }
     public void AddHistory(HistoryAction action)
     {
-        Debug.WriteLine(history.Count);
         history.Add(action);
     }   
 
@@ -88,7 +158,6 @@ public class SchetsControl : UserControl
     {
         // Maakt eerst de bitmap leeg, en tekent dan de history.
         schets.Schoon();
-        Debug.WriteLine(history.Count);
         Graphics g = MaakBitmapGraphics();
         
         foreach (var action in history)
@@ -134,6 +203,7 @@ public class SchetsControl : UserControl
     }
     public void Schoon(object o, EventArgs ea)
     {
+        history.Clear();
         schets.Schoon();
         this.Invalidate();
     }
