@@ -5,7 +5,10 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows.Forms;
 
 public class HistoryAction
@@ -14,19 +17,22 @@ public class HistoryAction
     public Point StartPoint { get; }
     public Point EndPoint { get; }
     public Char Character { get; }
+    public Color ToolColor { get; }
 
-    public HistoryAction(StartpuntTool tool, Point start, Point end)
+    public HistoryAction(StartpuntTool tool, Point start, Point end, Color color)
     {
         Tool = tool;
         StartPoint = start;
         EndPoint = end;
+        ToolColor = color;
     }
 
-    public HistoryAction(StartpuntTool tool, Point start, Char character)
+    public HistoryAction(StartpuntTool tool, Point start, Char character, Color color)
     {
         Tool = tool;
         StartPoint = start;
         Character = character;
+        ToolColor = color;
     }
 
     public void Draw(Graphics g, SchetsControl s)
@@ -74,7 +80,7 @@ public class HistoryAction
         double radiusX = Math.Abs(bottomRight.X - topLeft.X) / 2.0;
         double radiusY = Math.Abs(bottomRight.Y - topLeft.Y) / 2.0;
 
-        // dx en dy naar het midden van de cirkel zetten
+        // dx en dy naar het midden van de cirkel/ellipse zetten
         double dx = (p.X - centerX) / radiusX;
         double dy = (p.Y - centerY) / radiusY;
         return dx * dx + dy * dy <= 1;
@@ -103,12 +109,57 @@ public class HistoryAction
         double dy = p1.Y - p2.Y;
         return Math.Sqrt(dx * dx + dy * dy);
     }
+
+
+    public void WriteToFile(StreamWriter writer)
+    {
+        writer.WriteLine(Tool.GetType().FullName);           
+        writer.WriteLine($"{StartPoint.X},{StartPoint.Y}");  
+        writer.WriteLine($"{EndPoint.X},{EndPoint.Y}");      
+        writer.WriteLine(Character);                         
+        writer.WriteLine($"{ToolColor.R},{ToolColor.G},{ToolColor.B}");
+
+    }
+
+    
+    public static HistoryAction ReadFromFile(StreamReader reader)
+    {
+        // Om eens of andere reden leest hij deze regel niet.
+        string toolTypeName = reader.ReadLine();
+
+        string[] startPointData = reader.ReadLine().Split(',');
+        string[] endPointData = reader.ReadLine().Split(',');
+        char character = (char)reader.Read();
+
+        string empty1 = reader.ReadLine();  
+
+        Debug.WriteLine($"{toolTypeName}, {startPointData}, {endPointData}, {character}, {empty1}");
+        string[] colorData = reader.ReadLine().Split(',');
+        Color color = Color.FromArgb(int.Parse(colorData[0]), int.Parse(colorData[1]), int.Parse(colorData[2]));
+
+        Type toolType = Type.GetType(toolTypeName);
+        if (toolType == null || !typeof(StartpuntTool).IsAssignableFrom(toolType))
+            throw new InvalidOperationException($"Invalid tool type: {toolTypeName}");
+
+        StartpuntTool tool = (StartpuntTool)Activator.CreateInstance(toolType);
+        Point startPoint = new Point(int.Parse(startPointData[0]), int.Parse(startPointData[1]));
+        Point endPoint = new Point(int.Parse(endPointData[0]), int.Parse(endPointData[1]));
+
+        if (char.IsControl(character))
+            return new HistoryAction(tool, startPoint, endPoint, color);
+        else
+            return new HistoryAction(tool, startPoint, character, color);
+    }
+
+
+
 }
 public class SchetsControl : UserControl
 {
     private Schets schets;
     private Color penkleur;
-    private List<HistoryAction> history = new List<HistoryAction>();
+    // Public voor het afsluit-prompt.
+    public List<HistoryAction> history = new List<HistoryAction>();
     public void PopHistory(object o, EventArgs ea)
     {
         if (history.Count > 0)
@@ -223,7 +274,29 @@ public class SchetsControl : UserControl
         string kleurNaam = ((ToolStripMenuItem)obj).Text;
         penkleur = Color.FromName(kleurNaam);
     }
-    public void Opslaan(object obj, EventArgs ea) // Nieuw
+    public void LoadFile(object obj, EventArgs ea)
+    {
+        OpenFileDialog openFileDialog = new OpenFileDialog();
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        {
+            if (openFileDialog.FileName.EndsWith(".schets"))
+            {
+                history.Clear();
+                using (StreamReader reader = new StreamReader(openFileDialog.FileName))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        HistoryAction action = HistoryAction.ReadFromFile(reader);
+                        history.Add(action);
+                    }
+                }
+
+                this.Invalidate();
+            }
+        }
+        return;
+    }
+    public void Opslaan(object obj, EventArgs ea)
     {
         // Standaard Windows file-opslaan dialoog.
         SaveFileDialog dialog = new SaveFileDialog();
@@ -242,6 +315,23 @@ public class SchetsControl : UserControl
                     break;
                 case "BMP":
                     schets.KrijgBitmap().Save(dialog.FileName);
+                    break;
+                case "SCHETS":          
+                    
+                    using (StreamWriter writer = new StreamWriter(dialog.FileName))
+                    {
+                        for (int i = 0; i < history.Count; i++)
+                        {
+                            history[i].WriteToFile(writer);
+
+                            // Een witregel er tussen laten, Windows en C# laten automatisch (om een of andere reden) 
+                            if (i < history.Count - 1)
+                            {
+                                writer.WriteLine();
+                            }
+                        }   
+                    }
+                    
                     break;
             }
         }

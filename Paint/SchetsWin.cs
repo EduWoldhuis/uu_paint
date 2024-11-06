@@ -29,9 +29,25 @@ public class SchetsWin : Form
         this.huidigeTool = (ISchetsTool)((RadioButton)obj).Tag;
     }
 
+    private void afsluiten(object obj, FormClosingEventArgs ea)
+    {
+        if (this.schetscontrol.history.Count == 0)
+        { 
+            return;
+        }
+        DialogResult sluiten = MessageBox.Show("Er zijn onopgeslagen wijzigingen!\nAfsluiten zonder op te slaan?", "Waarschuwing!", MessageBoxButtons.YesNo);
+        if (sluiten == DialogResult.No)
+        {
+            ea.Cancel = true;
+        }
+    }
+    // Overload voor de menu-functie.
     private void afsluiten(object obj, EventArgs ea)
     {
-        //nieuw -- //Check voor veranderingen. Er wordt nu standaard een waarschuwing gegeven. Werkt ook nog niet voor rode kruis afsluiten maar weet niet waar dat is nog...
+        if (this.schetscontrol.history.Count == 0)
+        {
+            this.Close();
+        }
         DialogResult sluiten = MessageBox.Show("Er zijn onopgeslagen wijzigingen!\nAfsluiten zonder op te slaan?", "Waarschuwing!", MessageBoxButtons.YesNo);
         if (sluiten == DialogResult.Yes)
         {
@@ -85,17 +101,18 @@ public class SchetsWin : Form
         this.maakActieButtons(deKleuren);
         this.Resize += this.veranderAfmeting;
         this.veranderAfmeting(null, null);
+        this.FormClosing += this.afsluiten;
     }
 
     private void maakFileMenu()
     {   
         ToolStripMenuItem menu = new ToolStripMenuItem("File");
         menu.MergeAction = MergeAction.MatchOnly;
-        String[] opslaanAlsOpties = { "PNG", "JPG", "BMP" }; //nieuw
-        ToolStripMenuItem opslaanAls = new ToolStripMenuItem("Opslaan"); //nieuw
-        foreach (string o in opslaanAlsOpties) //nieuw
-            opslaanAls.DropDownItems.Add(o, null, schetscontrol.Opslaan); //nieuw
-        menu.DropDownItems.Add(opslaanAls); //nieuw
+        String[] opslaanAlsOpties = { "PNG", "JPG", "BMP", "SCHETS" }; 
+        ToolStripMenuItem opslaanAls = new ToolStripMenuItem("Opslaan");
+        foreach (string o in opslaanAlsOpties)
+            opslaanAls.DropDownItems.Add(o, null, schetscontrol.Opslaan);  
+        menu.DropDownItems.Add(opslaanAls);  
         //ToolStripMenuItem loadImage = new ToolStripMenuItem("Open");
         menu.DropDownItems.Add("Open", null, schetscontrol.LoadFile);
 

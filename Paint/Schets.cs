@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-// nieuw
 public interface drawInterface
 {
     void teken();
@@ -40,8 +39,6 @@ public class textObject : drawInterface
 public class Schets
 {
     private Bitmap bitmap;
-    // nieuw
-    // public List<drawInterface> history = new List<drawInterface>();
     public List<StartpuntTool> history = new List<StartpuntTool>();
 
     public Schets()
@@ -78,7 +75,7 @@ public class Schets
     {
         bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
     }
-    public Bitmap KrijgBitmap() //nieuw
+    public Bitmap KrijgBitmap()
     {
         return bitmap;
     }

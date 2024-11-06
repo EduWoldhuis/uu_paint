@@ -44,7 +44,7 @@ public class TekstTool : StartpuntTool
         Font font = new Font("Tahoma", 40);
         this.startpunt.X += (int)gr.MeasureString(c.ToString(), font, this.startpunt, StringFormat.GenericTypographic).Width;
 
-        HistoryAction action = new HistoryAction(this, this.startpunt, c);
+        HistoryAction action = new HistoryAction(this, this.startpunt, c, s.PenKleur);
         s.AddHistory(action);
         s.Invalidate();
     }
@@ -56,12 +56,10 @@ public class TekstTool : StartpuntTool
             {
                 kwast = new SolidBrush(s.PenKleur);
             }
-            // Graphics gr = s.MaakBitmapGraphics();
             Font font = new Font("Tahoma", 40);
             string tekst = c.ToString();
             SizeF sz = g.MeasureString(tekst, font, startpunt, StringFormat.GenericTypographic);
             g.DrawString(tekst, font, kwast, startpunt, StringFormat.GenericTypographic);
-            // gr.DrawRectangle(Pens.Black, startpunt.X, startpunt.Y, sz.Width, sz.Height);
         }
     }
 }
@@ -70,9 +68,7 @@ public abstract class TweepuntTool : StartpuntTool
 {
     public static Rectangle Punten2Rechthoek(Point p1, Point p2)
     {
-        return new Rectangle(new Point(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y))
-                            , new Size(Math.Abs(p1.X - p2.X), Math.Abs(p1.Y - p2.Y))
-                            );
+        return new Rectangle(new Point(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y)), new Size(Math.Abs(p1.X - p2.X), Math.Abs(p1.Y - p2.Y)));
     }
     public static Pen MaakPen(Brush b, int dikte)
     {
@@ -94,8 +90,7 @@ public abstract class TweepuntTool : StartpuntTool
     public override void MuisLos(SchetsControl s, Point p)
     {
         base.MuisLos(s, p);
-        // Debug.WriteLine($"Point: {p.ToString()} , {this.startpunt.ToString()}, Tool: {this.ToString()}");
-        HistoryAction action = new HistoryAction(this, this.startpunt, p);
+        HistoryAction action = new HistoryAction(this, this.startpunt, p, s.PenKleur);
 
         if (this.ToString() == "gum")
         {
